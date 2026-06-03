@@ -1,0 +1,1305 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Dismissal, PIP and Termination Infographic</title>
+  <style>
+    :root {
+      --ink: #192331;
+      --muted: #667085;
+      --line: #d7dde6;
+      --paper: #f6f8fb;
+      --panel: #ffffff;
+      --blue: #2557a7;
+      --blue-soft: #e8f0ff;
+      --green: #13856f;
+      --green-soft: #e6f6f2;
+      --amber: #b76e00;
+      --amber-soft: #fff2da;
+      --red: #b42318;
+      --red-soft: #ffe9e7;
+      --shadow: 0 16px 50px rgba(25, 35, 49, 0.12);
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      margin: 0;
+      min-height: 100vh;
+      color: var(--ink);
+      background: var(--paper);
+      font-family: Arial, Helvetica, sans-serif;
+    }
+
+    button, input {
+      font: inherit;
+    }
+
+    .lock-screen {
+      min-height: 100vh;
+      display: grid;
+      place-items: center;
+      padding: 24px;
+      background:
+        linear-gradient(135deg, rgba(37, 87, 167, 0.12), rgba(19, 133, 111, 0.10)),
+        var(--paper);
+    }
+
+    .lock-card {
+      width: min(460px, 100%);
+      background: var(--panel);
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      box-shadow: var(--shadow);
+      padding: 28px;
+    }
+
+    .lock-card h1 {
+      margin: 0 0 8px;
+      font-size: 26px;
+      line-height: 1.15;
+    }
+
+    .lock-card p {
+      margin: 0 0 20px;
+      color: var(--muted);
+      line-height: 1.45;
+    }
+
+    .password-row {
+      display: flex;
+      gap: 10px;
+    }
+
+    .password-row input {
+      width: 100%;
+      border: 1px solid var(--line);
+      border-radius: 6px;
+      padding: 12px 13px;
+      outline: none;
+    }
+
+    .password-row input:focus {
+      border-color: var(--blue);
+      box-shadow: 0 0 0 3px rgba(37, 87, 167, 0.15);
+    }
+
+    .primary-btn,
+    .ghost-btn,
+    .step-btn {
+      border: 0;
+      cursor: pointer;
+      border-radius: 6px;
+    }
+
+    .primary-btn {
+      color: white;
+      background: var(--blue);
+      padding: 12px 16px;
+      white-space: nowrap;
+    }
+
+    .error {
+      min-height: 20px;
+      margin-top: 10px;
+      color: var(--red);
+      font-size: 13px;
+    }
+
+    .app {
+      display: none;
+      min-height: 100vh;
+    }
+
+    .topbar {
+      position: sticky;
+      top: 0;
+      z-index: 10;
+      background: rgba(255, 255, 255, 0.92);
+      backdrop-filter: blur(10px);
+      border-bottom: 1px solid var(--line);
+    }
+
+    .topbar-inner {
+      width: min(1180px, calc(100% - 32px));
+      margin: 0 auto;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 16px;
+      padding: 14px 0;
+    }
+
+    .brand {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      min-width: 0;
+    }
+
+    .mark {
+      width: 38px;
+      height: 38px;
+      display: grid;
+      place-items: center;
+      color: white;
+      background: var(--ink);
+      border-radius: 7px;
+      font-weight: 700;
+    }
+
+    .brand h1 {
+      margin: 0;
+      font-size: 18px;
+      line-height: 1.2;
+    }
+
+    .brand span {
+      display: block;
+      color: var(--muted);
+      font-size: 12px;
+      margin-top: 2px;
+    }
+
+    .ghost-btn {
+      background: #eef2f7;
+      color: var(--ink);
+      padding: 9px 12px;
+    }
+
+    main {
+      width: min(1180px, calc(100% - 32px));
+      margin: 0 auto;
+      padding: 26px 0 36px;
+    }
+
+    .intro {
+      display: grid;
+      grid-template-columns: minmax(0, 1.1fr) minmax(280px, 0.9fr);
+      gap: 18px;
+      margin-bottom: 20px;
+      align-items: stretch;
+    }
+
+    .intro.single {
+      grid-template-columns: 1fr;
+    }
+
+    .summary,
+    .detail-panel,
+    .legend {
+      background: var(--panel);
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      box-shadow: 0 8px 28px rgba(25, 35, 49, 0.06);
+    }
+
+    .summary {
+      padding: 22px;
+    }
+
+    .summary h2,
+    .legend h2,
+    .detail-panel h2 {
+      margin: 0 0 10px;
+      font-size: 22px;
+      line-height: 1.18;
+    }
+
+    .summary p,
+    .legend p,
+    .detail-panel p {
+      margin: 0;
+      color: var(--muted);
+      line-height: 1.5;
+    }
+
+    .legend {
+      padding: 18px;
+    }
+
+    .legend-grid {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 10px;
+      margin-top: 14px;
+    }
+
+    .compare-grid {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 12px;
+      margin-top: 18px;
+    }
+
+    .compare-card {
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      padding: 13px;
+      background: #fbfcfe;
+    }
+
+    .compare-card b {
+      display: block;
+      margin-bottom: 6px;
+      font-size: 14px;
+    }
+
+    .compare-card span {
+      display: block;
+      color: var(--muted);
+      font-size: 13px;
+      line-height: 1.4;
+    }
+
+    .pill {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      min-height: 38px;
+      padding: 8px 10px;
+      border-radius: 6px;
+      background: #f7f9fc;
+      border: 1px solid var(--line);
+      font-size: 13px;
+    }
+
+    .dot {
+      width: 10px;
+      height: 10px;
+      border-radius: 50%;
+      flex: 0 0 auto;
+    }
+
+    .committee-note {
+      margin-top: 12px;
+      padding: 12px;
+      border-radius: 7px;
+      background: var(--amber-soft);
+      border: 1px solid #f4d49a;
+    }
+
+    .committee-note b {
+      display: block;
+      margin-bottom: 5px;
+      color: #6f4300;
+      font-size: 14px;
+    }
+
+    .committee-note span {
+      display: block;
+      color: #6f4300;
+      font-size: 13px;
+      line-height: 1.45;
+    }
+
+    .dot.blue { background: var(--blue); }
+    .dot.green { background: var(--green); }
+    .dot.amber { background: var(--amber); }
+    .dot.red { background: var(--red); }
+
+    .tabs {
+      display: flex;
+      gap: 14px;
+      padding: 0;
+      width: min(820px, 100%);
+      background: transparent;
+      border-radius: 8px;
+      margin: 0 0 24px;
+    }
+
+    .tab {
+      flex: 1;
+      border: 2px solid transparent;
+      border-radius: 8px;
+      min-height: 76px;
+      padding: 20px 22px;
+      cursor: pointer;
+      color: var(--ink);
+      font-weight: 700;
+      font-size: 21px;
+      line-height: 1.2;
+      box-shadow: 0 8px 24px rgba(25, 35, 49, 0.08);
+      transition: transform 180ms ease, box-shadow 180ms ease, border-color 180ms ease;
+    }
+
+    .tab[data-flow="performance"] {
+      background: var(--green-soft);
+      border-color: #a8ded0;
+      color: #0d6656;
+    }
+
+    .tab[data-flow="misconduct"] {
+      background: var(--red-soft);
+      border-color: #ffbeb9;
+      color: #8d1b12;
+    }
+
+    .tab:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 14px 30px rgba(25, 35, 49, 0.13);
+    }
+
+    .tab.active {
+      color: white;
+      box-shadow: 0 16px 34px rgba(25, 35, 49, 0.18);
+    }
+
+    .tab[data-flow="performance"].active {
+      background: var(--green);
+      border-color: var(--green);
+    }
+
+    .tab[data-flow="misconduct"].active {
+      background: var(--red);
+      border-color: var(--red);
+    }
+
+    .workspace {
+      display: grid;
+      grid-template-columns: minmax(0, 1.35fr) minmax(320px, 0.85fr);
+      gap: 18px;
+      align-items: start;
+    }
+
+    .flow-card {
+      background: var(--panel);
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      padding: 18px;
+      overflow: hidden;
+    }
+
+    .flow-title {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      gap: 16px;
+      margin-bottom: 16px;
+    }
+
+    .flow-title h2 {
+      margin: 0;
+      font-size: 22px;
+    }
+
+    .flow-title p {
+      margin: 4px 0 0;
+      color: var(--muted);
+      font-size: 13px;
+    }
+
+    .timeline {
+      position: relative;
+      display: grid;
+      gap: 12px;
+      padding-left: 22px;
+    }
+
+    .timeline::before {
+      content: "";
+      position: absolute;
+      left: 10px;
+      top: 20px;
+      bottom: 20px;
+      width: 2px;
+      background: var(--line);
+    }
+
+    .step-btn {
+      position: relative;
+      width: 100%;
+      display: grid;
+      grid-template-columns: 190px minmax(0, 1fr);
+      gap: 16px;
+      text-align: left;
+      background: #fbfcfe;
+      border: 1px solid var(--line);
+      padding: 13px;
+      min-height: 78px;
+      transition: transform 180ms ease, border-color 180ms ease, box-shadow 180ms ease, background 180ms ease;
+    }
+
+    .step-btn::before {
+      content: "";
+      position: absolute;
+      left: -26px;
+      top: 28px;
+      width: 14px;
+      height: 14px;
+      background: white;
+      border: 3px solid var(--blue);
+      border-radius: 50%;
+    }
+
+    .step-btn:hover,
+    .step-btn.active {
+      transform: translateX(5px);
+      border-color: var(--blue);
+      box-shadow: 0 10px 26px rgba(25, 35, 49, 0.10);
+      background: white;
+    }
+
+    .step-btn.active::before {
+      background: var(--blue);
+    }
+
+    .time {
+      display: grid;
+      align-content: center;
+      justify-items: start;
+      gap: 4px;
+      color: var(--blue);
+      font-weight: 700;
+      font-size: 12px;
+      line-height: 1.25;
+      min-width: 0;
+    }
+
+    .time span {
+      display: block;
+      width: 100%;
+      max-width: 100%;
+      background: var(--blue-soft);
+      padding: 5px 7px;
+      border-radius: 6px;
+    }
+
+    .step-main strong {
+      display: block;
+      font-size: 16px;
+      margin-bottom: 4px;
+    }
+
+    .step-main small {
+      display: block;
+      color: var(--muted);
+      line-height: 1.35;
+    }
+
+    .step-status {
+      display: inline-block;
+      width: fit-content;
+      margin-top: 8px;
+      padding: 4px 7px;
+      border-radius: 6px;
+      background: #eef2f7;
+      color: var(--muted);
+      font-size: 12px;
+      font-weight: 700;
+    }
+
+    .step-status.done {
+      background: var(--green-soft);
+      color: var(--green);
+    }
+
+    .step-status.active-work {
+      background: var(--amber-soft);
+      color: var(--amber);
+    }
+
+    .detail-panel {
+      position: sticky;
+      top: 82px;
+      padding: 20px;
+      min-height: 420px;
+    }
+
+    .status-tag {
+      display: inline-flex;
+      align-items: center;
+      gap: 7px;
+      margin-bottom: 14px;
+      padding: 7px 10px;
+      border-radius: 6px;
+      font-size: 13px;
+      font-weight: 700;
+      background: var(--green-soft);
+      color: var(--green);
+    }
+
+    .detail-panel h2 {
+      margin-bottom: 8px;
+    }
+
+    .meta-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 10px;
+      margin: 18px 0;
+    }
+
+    .meta {
+      border: 1px solid var(--line);
+      border-radius: 7px;
+      padding: 10px;
+      background: #fbfcfe;
+    }
+
+    .meta b {
+      display: block;
+      font-size: 12px;
+      color: var(--muted);
+      margin-bottom: 4px;
+    }
+
+    .meta span {
+      font-weight: 700;
+    }
+
+    .detail-section {
+      margin-top: 16px;
+      padding-top: 16px;
+      border-top: 1px solid var(--line);
+    }
+
+    .detail-section h3 {
+      margin: 0 0 8px;
+      font-size: 15px;
+    }
+
+    .detail-section ul {
+      margin: 0;
+      padding-left: 18px;
+      color: var(--muted);
+      line-height: 1.5;
+    }
+
+    .tracker-form {
+      display: grid;
+      gap: 10px;
+      margin-top: 10px;
+    }
+
+    .tracker-help {
+      margin: 0 0 10px;
+      color: var(--muted);
+      font-size: 13px;
+      line-height: 1.45;
+    }
+
+    .tracker-row {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 10px;
+    }
+
+    .tracker-field label {
+      display: block;
+      margin-bottom: 5px;
+      color: var(--muted);
+      font-size: 12px;
+      font-weight: 700;
+    }
+
+    .tracker-field input,
+    .tracker-field select,
+    .tracker-field textarea {
+      width: 100%;
+      border: 1px solid var(--line);
+      border-radius: 6px;
+      padding: 9px 10px;
+      color: var(--ink);
+      background: white;
+      outline: none;
+    }
+
+    .tracker-field textarea {
+      min-height: 72px;
+      resize: vertical;
+    }
+
+    .tracker-field input:focus,
+    .tracker-field select:focus,
+    .tracker-field textarea:focus {
+      border-color: var(--blue);
+      box-shadow: 0 0 0 3px rgba(37, 87, 167, 0.12);
+    }
+
+    .tracker-actions {
+      display: flex;
+      gap: 8px;
+      flex-wrap: wrap;
+    }
+
+    .small-btn {
+      border: 0;
+      border-radius: 6px;
+      padding: 9px 11px;
+      cursor: pointer;
+      background: var(--blue);
+      color: white;
+      font-weight: 700;
+    }
+
+    .small-btn.secondary {
+      background: #eef2f7;
+      color: var(--ink);
+    }
+
+    .tracker-saved {
+      min-height: 18px;
+      color: var(--green);
+      font-size: 12px;
+      font-weight: 700;
+    }
+
+    .matrix-card {
+      display: none;
+      background: var(--panel);
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      padding: 18px;
+      margin-top: 18px;
+      box-shadow: 0 8px 28px rgba(25, 35, 49, 0.06);
+    }
+
+    .matrix-card.visible {
+      display: block;
+    }
+
+    .matrix-card h2 {
+      margin: 0 0 8px;
+      font-size: 20px;
+    }
+
+    .matrix-card p {
+      margin: 0 0 14px;
+      color: var(--muted);
+      line-height: 1.45;
+    }
+
+    .matrix-grid {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 12px;
+    }
+
+    .matrix-item {
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      background: #fbfcfe;
+      padding: 14px;
+    }
+
+    .matrix-item h3 {
+      margin: 0 0 8px;
+      font-size: 16px;
+    }
+
+    .matrix-item p {
+      margin-bottom: 10px;
+      font-size: 13px;
+    }
+
+    .matrix-item ul {
+      margin: 0;
+      padding-left: 18px;
+      color: var(--muted);
+      line-height: 1.45;
+      font-size: 13px;
+    }
+
+    .legal-note {
+      margin-top: 18px;
+      padding: 12px;
+      border-radius: 7px;
+      background: var(--amber-soft);
+      color: #6f4300;
+      font-size: 13px;
+      line-height: 1.45;
+    }
+
+    .hidden {
+      display: none;
+    }
+
+    @media (max-width: 900px) {
+      .intro,
+      .workspace {
+        grid-template-columns: 1fr;
+      }
+
+      .detail-panel {
+        position: static;
+      }
+    }
+
+    @media (max-width: 560px) {
+      .topbar-inner {
+        align-items: flex-start;
+        flex-direction: column;
+      }
+
+      .password-row {
+        flex-direction: column;
+      }
+
+      .tabs {
+        flex-direction: column;
+      }
+
+      .legend-grid,
+      .compare-grid,
+      .matrix-grid,
+      .tracker-row,
+      .meta-grid {
+        grid-template-columns: 1fr;
+      }
+
+      .step-btn {
+        grid-template-columns: 1fr;
+      }
+    }
+  </style>
+</head>
+<body>
+  <section class="lock-screen" id="lockScreen">
+    <div class="lock-card">
+      <h1>Wezmart Employment Action Workflow</h1>
+      <p>Enter the password to view the PIP, misconduct, removal and termination decision flow.</p>
+      <form id="loginForm" class="password-row">
+        <input id="passwordInput" type="password" autocomplete="current-password" placeholder="Password">
+        <button class="primary-btn" type="submit">Unlock</button>
+      </form>
+      <div class="error" id="errorText"></div>
+    </div>
+  </section>
+
+  <section class="app" id="app">
+    <header class="topbar">
+      <div class="topbar-inner">
+        <div class="brand">
+          <div class="mark">HR</div>
+          <div>
+            <h1>Dismissal, PIP and Termination Workflow</h1>
+            <span>Interactive SOP guide focused on process, timeline and approval authority</span>
+          </div>
+        </div>
+        <button class="ghost-btn" id="lockAgain" type="button">Lock</button>
+      </div>
+    </header>
+
+    <main>
+      <section class="intro single">
+        <div class="legend">
+          <h2>Owner Legend</h2>
+          <p>Every process step needs a clear department or authority so no one person controls the whole outcome.</p>
+          <div class="legend-grid">
+            <div class="pill"><span class="dot blue"></span> HOD: work facts and target setting</div>
+            <div class="pill"><span class="dot green"></span> HR: process and records</div>
+            <div class="pill"><span class="dot amber"></span> Works Committee: risk review</div>
+            <div class="pill"><span class="dot red"></span> CEO / BOD: final serious action</div>
+          </div>
+          <div class="committee-note">
+            <b>Works Committee</b>
+            <span>A neutral review group, normally made up of senior representatives from HR, Legal and Risk or other independent senior officers. They review evidence, fairness, consistency and risk, and make recommendations before serious action goes to CEO/BOD.</span>
+          </div>
+        </div>
+      </section>
+
+      <div class="tabs" role="tablist" aria-label="Workflow selector">
+        <button class="tab active" type="button" data-flow="performance">Poor Performance / PIP</button>
+        <button class="tab" type="button" data-flow="misconduct">Misconduct / Dismissal</button>
+      </div>
+
+      <section class="workspace">
+        <div class="flow-card">
+          <div class="flow-title">
+            <div>
+              <h2 id="flowHeading">Poor Performance / PIP</h2>
+              <p id="flowSubheading">Used when the issue is capability, output, quality, deadlines or work standard.</p>
+            </div>
+          </div>
+          <div class="timeline" id="timeline"></div>
+        </div>
+
+        <aside class="detail-panel" id="detailPanel">
+          <span class="status-tag" id="statusTag">Click a step</span>
+          <h2 id="detailTitle">Choose a step in the chart</h2>
+          <p id="detailText">The explanation, timeline, owner and improvement actions will appear here.</p>
+          <div class="meta-grid">
+            <div class="meta">
+              <b>Owner</b>
+              <span id="detailOwner">-</span>
+            </div>
+            <div class="meta">
+              <b>Timeline</b>
+              <span id="detailTimeline">-</span>
+            </div>
+          </div>
+          <div class="detail-section">
+            <h3>Monitor This Step</h3>
+            <p class="tracker-help">Use this like a simple tracker: assign a PIC, set a target date, update status, then record the next action or completion note.</p>
+            <div class="tracker-form">
+              <div class="tracker-row">
+                <div class="tracker-field">
+                  <label for="trackPic">Person in charge</label>
+                  <input id="trackPic" type="text" placeholder="Name / department">
+                </div>
+                <div class="tracker-field">
+                  <label for="trackDate">Target date</label>
+                  <input id="trackDate" type="date">
+                </div>
+              </div>
+              <div class="tracker-row">
+                <div class="tracker-field">
+                  <label for="trackStatus">Status</label>
+                  <select id="trackStatus">
+                    <option value="">Not set</option>
+                    <option>Not started</option>
+                    <option>In progress</option>
+                    <option>Waiting for employee</option>
+                    <option>Pending approval</option>
+                    <option>Done</option>
+                    <option>On hold</option>
+                  </select>
+                </div>
+                <div class="tracker-field">
+                  <label for="trackDone">Done date</label>
+                  <input id="trackDone" type="date">
+                </div>
+              </div>
+              <div class="tracker-field">
+                <label for="trackNotes">Notes / next action</label>
+                <textarea id="trackNotes" placeholder="Example: HR to issue show cause by Friday."></textarea>
+              </div>
+              <div class="tracker-actions">
+                <button class="small-btn" id="saveTrack" type="button">Save Step</button>
+                <button class="small-btn secondary" id="clearTrack" type="button">Clear</button>
+              </div>
+              <div class="tracker-saved" id="trackerSaved"></div>
+            </div>
+          </div>
+          <div class="detail-section">
+            <h3>Examples</h3>
+            <ul id="detailExamples"></ul>
+          </div>
+          <div class="detail-section">
+            <h3>What can be done better</h3>
+            <ul id="detailBetter"></ul>
+          </div>
+          <div class="detail-section">
+            <h3>Records to keep</h3>
+            <ul id="detailRecords"></ul>
+          </div>
+          <div class="legal-note" id="legalNote">
+            Serious outcomes such as demotion, removal or dismissal should be supported by fair process, documented reasons and proper approval.
+          </div>
+        </aside>
+      </section>
+
+      <section class="matrix-card" id="misconductMatrix">
+        <h2>Misconduct Category Matrix</h2>
+        <p>Use this to classify the seriousness of the case before deciding whether warning, DI, removal, demotion or dismissal should be considered.</p>
+        <div class="matrix-grid">
+          <div class="matrix-item">
+            <h3>Minor Misconduct</h3>
+            <p>Behavioral deviations that disrupt administrative order but do not cause direct financial or legal harm.</p>
+            <ul>
+              <li>Habitual or excessive tardiness.</li>
+              <li>Violations of office dress code policies.</li>
+              <li>Failing to log out or punch timecards properly.</li>
+              <li>Minor discourtesy toward colleagues.</li>
+            </ul>
+          </div>
+          <div class="matrix-item">
+            <h3>Major Misconduct</h3>
+            <p>Actions that damage operational productivity, compromise security, or violate corporate governance.</p>
+            <ul>
+              <li>Disobeying clear, legitimate instructions from a superior.</li>
+              <li>Installing unapproved software or games on corporate computers.</li>
+              <li>Leaving work early or being absent without notice.</li>
+              <li>Sharing inaccurate information outside the organization.</li>
+            </ul>
+          </div>
+          <div class="matrix-item">
+            <h3>Gross Misconduct</h3>
+            <p>Critical breaches that fundamentally undermine the employment relationship and cause direct financial or reputational harm.</p>
+            <ul>
+              <li>Theft, fraud, or dishonesty involving corporate properties.</li>
+              <li>Asking for, offering, or accepting bribes or unauthorized financial favors.</li>
+              <li>Physical fights, threats, or harassment on office premises.</li>
+              <li>Being convicted of a criminal offense by a Court of Law.</li>
+              <li>Falsifying or tampering with attendance and business records.</li>
+            </ul>
+          </div>
+        </div>
+      </section>
+    </main>
+  </section>
+
+  <script>
+    const PASSWORD = "Victortai";
+
+    const flows = {
+      performance: {
+        heading: "Poor Performance / PIP",
+        subheading: "Used when the issue is capability, output, quality, deadlines or work standard.",
+        note: "Poor performance should not be treated exactly like misconduct unless there is negligence, refusal, dishonesty or wilful failure.",
+        steps: [
+          {
+            title: "Poor performance identified",
+            owner: "HOD",
+            timeline: "Day 0",
+            summary: "The HOD notices repeated work gaps such as missed deadlines, poor work quality, low output, repeated correction, or failure to meet role expectations.",
+            better: ["Define the exact work gap, not just a general complaint.", "Compare performance against role duties, targets, or prior instructions.", "Separate attitude issues from skill or capability issues."],
+            records: ["Work samples", "Deadline records", "Client or internal feedback", "Prior coaching notes"]
+          },
+          {
+            title: "Initial review",
+            owner: "HOD + HR",
+            timeline: "Within 3 working days",
+            summary: "HR and the HOD check whether the concern is supported by evidence and whether coaching, clarification, or formal action is needed.",
+            better: ["Check whether targets were clear and realistic.", "Confirm whether tools, training, or instructions were provided.", "Avoid starting PIP from one isolated incident."],
+            records: ["Performance data", "Job description", "Previous appraisal notes", "Emails or task records"]
+          },
+          {
+            title: "Show cause / explanation",
+            owner: "HR issues, HOD supports",
+            timeline: "Employee reply within 5 working days",
+            summary: "The employee is asked to explain the performance gap before the Company decides whether formal warning or PIP is appropriate.",
+            better: ["State the specific issues clearly.", "Give the employee reasonable time to respond.", "Consider valid operational constraints before issuing warning."],
+            records: ["Show cause notice", "Employee reply", "HOD comments", "HR assessment"]
+          },
+          {
+            title: "Performance warning",
+            owner: "HR + HOD",
+            timeline: "After explanation review",
+            summary: "If the explanation is not satisfactory, HR may issue a written performance warning and prepare the employee for formal PIP.",
+            better: ["Explain what standard was not met.", "Avoid emotional or vague language.", "Connect warning to measurable improvement expectations."],
+            records: ["Warning letter", "Acknowledgement", "Performance examples"]
+          },
+          {
+            title: "60-day PIP starts",
+            owner: "HR + HOD",
+            timeline: "Minimum 60 days",
+            summary: "A structured plan begins with clear targets, support, review dates, and expected outcomes.",
+            better: ["Use measurable targets with numbers, dates or quality standards.", "State support to be given by the Company.", "Make the employee understand what passing the PIP looks like."],
+            records: ["PIP form", "Targets", "Support plan", "Employee acknowledgement"]
+          },
+          {
+            title: "Weekly PIP reviews",
+            owner: "HOD documents, HR monitors",
+            timeline: "Weekly during PIP",
+            summary: "Progress is reviewed weekly so the employee knows whether they are improving and the Company has a fair record.",
+            better: ["Do not shift targets halfway without written reason.", "Give practical feedback after each review.", "Record both improvement and failure fairly."],
+            records: ["Weekly review notes", "Updated task results", "Attendance at review meetings"]
+          },
+          {
+            title: "Final PIP review",
+            owner: "HR + HOD",
+            timeline: "End of 60 days",
+            summary: "HR and the HOD decide whether the employee has improved enough, needs extension, should be reassigned, demoted, removed from role, or terminated.",
+            better: ["Compare actual results against PIP targets.", "Avoid automatic termination.", "Consider whether extension or reassignment is reasonable."],
+            records: ["Final PIP report", "Recommendation memo", "Supporting evidence"]
+          },
+          {
+            title: "Works Committee review",
+            owner: "Works Committee",
+            timeline: "Within 5 working days",
+            summary: "For serious consequences such as demotion, removal from position or termination, the Works Committee checks fairness, evidence, proportionality and risk.",
+            better: ["Ensure committee members are neutral.", "Check consistency with past cases.", "Confirm the file can support the proposed outcome."],
+            records: ["Committee minutes", "Review checklist", "Recommendation"]
+          },
+          {
+            title: "CEO / BOD approval",
+            owner: "CEO / BOD",
+            timeline: "Before final letter",
+            summary: "Final approval is required for serious outcomes such as removal, demotion or termination.",
+            better: ["Approve only after reviewing the process file.", "Make sure reasons are documented.", "Do not backdate decisions."],
+            records: ["Approval note", "Signed decision", "Final action instruction"]
+          },
+          {
+            title: "Decision and appeal",
+            owner: "HR + Appeal Group",
+            timeline: "Appeal within 10 working days",
+            summary: "HR issues the decision letter. The employee may use the internal appeal route. Internal final decision does not remove statutory rights.",
+            better: ["State the decision and reason clearly.", "Explain internal appeal timeline.", "Keep all documents in the personnel file."],
+            records: ["Decision letter", "Appeal letter if any", "Appeal outcome"]
+          }
+        ]
+      },
+      misconduct: {
+        heading: "Misconduct / Dismissal",
+        subheading: "Used when the issue is conduct, breach of rules, dishonesty, absence, refusal or serious workplace behaviour.",
+        note: "Dismissal for misconduct should normally follow due inquiry. Suspension pending inquiry should be controlled and documented.",
+        steps: [
+          {
+            title: "Incident reported",
+            owner: "HOD / Complainant",
+            timeline: "Day 0",
+            summary: "A possible misconduct incident is reported, such as dishonesty, unauthorised absence, refusal to follow lawful instruction, harassment, or serious breach.",
+            better: ["Record the report quickly.", "Avoid deciding guilt at this stage.", "Protect evidence before it disappears."],
+            records: ["Incident report", "Initial complaint", "Screenshots or logs"]
+          },
+          {
+            title: "Evidence gathering",
+            owner: "HOD + HR",
+            timeline: "Within 3 working days where possible",
+            summary: "HR and the HOD collect available evidence and witness information before formal action is taken.",
+            better: ["Use neutral HR verification.", "Keep originals where possible.", "Avoid asking leading questions to witnesses."],
+            records: ["Emails", "Attendance records", "CCTV or system logs", "Witness statements"]
+          },
+          {
+            title: "Prima facie assessment",
+            owner: "HR + Works Committee",
+            timeline: "Within 5 working days",
+            summary: "The Company checks whether there is enough initial evidence to require the employee to answer the allegation.",
+            better: ["Confirm the alleged rule breach.", "Classify minor, major or gross misconduct.", "Close weak cases instead of forcing action."],
+            records: ["Assessment note", "Evidence list", "Case classification"]
+          },
+          {
+            title: "Show cause letter",
+            owner: "HR",
+            timeline: "Reply within 5 working days",
+            summary: "The employee receives the allegation and has a chance to provide a written explanation.",
+            better: ["State the allegation with date, place and facts.", "Do not make the letter sound like guilt is already decided.", "Give a clear reply deadline."],
+            records: ["Show cause letter", "Proof of service", "Employee explanation"]
+          },
+          {
+            title: "Response review",
+            owner: "HR + HOD",
+            timeline: "Within 3 working days after reply",
+            summary: "The employee's explanation is reviewed. Minor matters may be closed or handled by warning; serious unresolved matters may proceed to DI.",
+            better: ["Consider mitigation honestly.", "Check whether the explanation answers the allegation.", "Keep the penalty proportionate."],
+            records: ["Review note", "HOD recommendation", "HR validation"]
+          },
+          {
+            title: "Suspension pending DI",
+            owner: "HR + Works Committee",
+            timeline: "Not exceeding 2 weeks",
+            summary: "For serious matters, the employee may be suspended pending inquiry where necessary to protect evidence, workplace safety or investigation integrity.",
+            better: ["Use suspension only when necessary.", "State the reason and period.", "Restore withheld wages if misconduct is not proven, where applicable."],
+            records: ["Suspension letter", "Approval record", "Wage restoration record if applicable"]
+          },
+          {
+            title: "DI notice and charge sheet",
+            owner: "HR",
+            timeline: "At least 7 working days before hearing",
+            summary: "The employee receives formal charges and details of the domestic inquiry hearing.",
+            better: ["Make charges specific and understandable.", "Give enough preparation time.", "Appoint neutral panel members."],
+            records: ["DI notice", "Charge sheet", "Panel appointment record"]
+          },
+          {
+            title: "Domestic Inquiry hearing",
+            owner: "Independent DI Panel",
+            timeline: "Hearing date",
+            summary: "The panel hears evidence from both sides, allows witnesses and questions, and records the proceedings.",
+            better: ["Panel must stay neutral.", "Let the employee respond to evidence.", "Keep full minutes of the hearing."],
+            records: ["Minutes", "Evidence bundle", "Witness notes", "Attendance record"]
+          },
+          {
+            title: "Findings and recommendation",
+            owner: "DI Panel + Works Committee",
+            timeline: "Within 5 working days after DI",
+            summary: "The DI panel decides whether the charge is proven. The Works Committee recommends a proportionate penalty if proven.",
+            better: ["Separate findings from punishment.", "Explain why evidence proves or does not prove the charge.", "Check past consistency."],
+            records: ["DI findings report", "Penalty recommendation", "Committee minutes"]
+          },
+          {
+            title: "CEO / BOD final approval",
+            owner: "CEO / BOD",
+            timeline: "Before dismissal or removal",
+            summary: "Dismissal, removal from position or demotion should receive final approval before HR issues the decision.",
+            better: ["Review the whole file before approving.", "Ensure the decision is not predetermined.", "Record reasons clearly."],
+            records: ["Approval paper", "Signed approval", "Final instruction to HR"]
+          },
+          {
+            title: "Decision and appeal",
+            owner: "HR + Appeal Group",
+            timeline: "Appeal within 10 working days",
+            summary: "HR issues the outcome letter. The employee can appeal internally, while statutory rights remain unaffected.",
+            better: ["State outcome, reason and effective date.", "Mention internal appeal route.", "Keep final documents secure."],
+            records: ["Outcome letter", "Appeal documents", "Final internal decision"]
+          }
+        ]
+      }
+    };
+
+    const lockScreen = document.getElementById("lockScreen");
+    const app = document.getElementById("app");
+    const loginForm = document.getElementById("loginForm");
+    const passwordInput = document.getElementById("passwordInput");
+    const errorText = document.getElementById("errorText");
+    const lockAgain = document.getElementById("lockAgain");
+    const timeline = document.getElementById("timeline");
+    const flowHeading = document.getElementById("flowHeading");
+    const flowSubheading = document.getElementById("flowSubheading");
+    const misconductMatrix = document.getElementById("misconductMatrix");
+    const statusTag = document.getElementById("statusTag");
+    const detailTitle = document.getElementById("detailTitle");
+    const detailText = document.getElementById("detailText");
+    const detailOwner = document.getElementById("detailOwner");
+    const detailTimeline = document.getElementById("detailTimeline");
+    const detailExamples = document.getElementById("detailExamples");
+    const detailBetter = document.getElementById("detailBetter");
+    const detailRecords = document.getElementById("detailRecords");
+    const legalNote = document.getElementById("legalNote");
+    const trackPic = document.getElementById("trackPic");
+    const trackDate = document.getElementById("trackDate");
+    const trackStatus = document.getElementById("trackStatus");
+    const trackDone = document.getElementById("trackDone");
+    const trackNotes = document.getElementById("trackNotes");
+    const saveTrack = document.getElementById("saveTrack");
+    const clearTrack = document.getElementById("clearTrack");
+    const trackerSaved = document.getElementById("trackerSaved");
+
+    const flowExamples = {
+      performance: [
+        "Consistently missing agreed deadlines despite reminders or coaching.",
+        "Work contains repeated accuracy or quality issues and needs frequent correction.",
+        "Unable to meet reasonable output or KPI expectations for the role.",
+        "Repeated failure to follow the correct work process because of skill, knowledge or capability gap.",
+        "Slow turnaround, poor prioritisation, or incomplete work without misconduct element."
+      ],
+      misconduct: [
+        "Theft, fraud, dishonesty, falsifying claims, attendance or company records.",
+        "Absent without approval, leaving work without notice, or repeated unauthorised lateness.",
+        "Refusal to follow a lawful and reasonable instruction from a superior.",
+        "Harassment, threats, fighting, bribery, conflict of interest or misuse of company property.",
+        "Data leak, breach of confidentiality, or serious breach of company policy."
+      ]
+    };
+
+    let currentFlow = "performance";
+    let selectedIndex = 0;
+    const storagePrefix = "wezmarthr-workflow-";
+
+    function unlock() {
+      lockScreen.style.display = "none";
+      app.style.display = "block";
+      renderFlow(currentFlow, 0);
+    }
+
+    function lock() {
+      app.style.display = "none";
+      lockScreen.style.display = "grid";
+      passwordInput.value = "";
+      errorText.textContent = "";
+      passwordInput.focus();
+    }
+
+    function renderList(items) {
+      return items.map(item => `<li>${item}</li>`).join("");
+    }
+
+    function trackerKey() {
+      return `${storagePrefix}${currentFlow}-${selectedIndex}`;
+    }
+
+    function readTrackerFor(flowKey, index) {
+      return JSON.parse(localStorage.getItem(`${storagePrefix}${flowKey}-${index}`) || "{}");
+    }
+
+    function loadTracker() {
+      const saved = JSON.parse(localStorage.getItem(trackerKey()) || "{}");
+      trackPic.value = saved.pic || "";
+      trackDate.value = saved.date || "";
+      trackStatus.value = saved.status || "";
+      trackDone.value = saved.done || "";
+      trackNotes.value = saved.notes || "";
+      trackerSaved.textContent = saved.updated ? `Saved: ${saved.updated}` : "";
+    }
+
+    function saveTracker() {
+      const data = {
+        pic: trackPic.value,
+        date: trackDate.value,
+        status: trackStatus.value,
+        done: trackDone.value,
+        notes: trackNotes.value,
+        updated: new Date().toLocaleString()
+      };
+      localStorage.setItem(trackerKey(), JSON.stringify(data));
+      trackerSaved.textContent = `Saved: ${data.updated}`;
+      renderFlow(currentFlow, selectedIndex);
+    }
+
+    function clearTracker() {
+      localStorage.removeItem(trackerKey());
+      trackPic.value = "";
+      trackDate.value = "";
+      trackStatus.value = "";
+      trackDone.value = "";
+      trackNotes.value = "";
+      trackerSaved.textContent = "Cleared.";
+      renderFlow(currentFlow, selectedIndex);
+    }
+
+    function renderDetail(step) {
+      statusTag.textContent = "Selected step";
+      detailTitle.textContent = step.title;
+      detailText.textContent = step.summary;
+      detailOwner.textContent = step.owner;
+      detailTimeline.textContent = step.timeline;
+      detailExamples.innerHTML = renderList(flowExamples[currentFlow]);
+      detailBetter.innerHTML = renderList(step.better);
+      detailRecords.innerHTML = renderList(step.records);
+      legalNote.textContent = flows[currentFlow].note;
+      loadTracker();
+    }
+
+    function renderFlow(flowKey, index) {
+      currentFlow = flowKey;
+      selectedIndex = index;
+      const flow = flows[flowKey];
+      flowHeading.textContent = flow.heading;
+      flowSubheading.textContent = flow.subheading;
+      misconductMatrix.classList.toggle("visible", flowKey === "misconduct");
+      timeline.innerHTML = "";
+
+      flow.steps.forEach((step, stepIndex) => {
+        const saved = readTrackerFor(flowKey, stepIndex);
+        const status = saved.status || "Not set";
+        const statusClass = status === "Done" ? " done" : status && status !== "Not set" ? " active-work" : "";
+        const button = document.createElement("button");
+        button.type = "button";
+        button.className = "step-btn" + (stepIndex === selectedIndex ? " active" : "");
+        button.innerHTML = `
+          <div class="time"><span>${step.timeline}</span></div>
+          <div class="step-main">
+            <strong>${step.title}</strong>
+            <small>Owner: ${step.owner}</small>
+            <span class="step-status${statusClass}">${status}</span>
+          </div>
+        `;
+        button.addEventListener("click", () => {
+          document.querySelectorAll(".step-btn").forEach(item => item.classList.remove("active"));
+          button.classList.add("active");
+          selectedIndex = stepIndex;
+          renderDetail(step);
+        });
+        timeline.appendChild(button);
+      });
+
+      renderDetail(flow.steps[selectedIndex]);
+    }
+
+    loginForm.addEventListener("submit", event => {
+      event.preventDefault();
+      if (passwordInput.value === PASSWORD) {
+        unlock();
+      } else {
+        errorText.textContent = "Incorrect password.";
+      }
+    });
+
+    lockAgain.addEventListener("click", lock);
+    saveTrack.addEventListener("click", saveTracker);
+    clearTrack.addEventListener("click", clearTracker);
+
+    document.querySelectorAll(".tab").forEach(tab => {
+      tab.addEventListener("click", () => {
+        document.querySelectorAll(".tab").forEach(item => item.classList.remove("active"));
+        tab.classList.add("active");
+        renderFlow(tab.dataset.flow, 0);
+      });
+    });
+  </script>
+</body>
+</html>
