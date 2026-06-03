@@ -1,0 +1,372 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>WIB Dismissal, PIP & Termination Workflow</title>
+  <style>
+    :root{--ink:#192331;--muted:#667085;--line:#d7dde6;--paper:#f6f8fb;--panel:#fff;--blue:#2557a7;--blue-soft:#e8f0ff;--green:#13856f;--green-soft:#e6f6f2;--amber:#b76e00;--amber-soft:#fff2da;--red:#b42318;--red-soft:#ffe9e7}
+    *{box-sizing:border-box}
+    body{font-family:Arial,Helvetica,sans-serif;margin:0;background:var(--paper);color:var(--ink)}
+    button,input,select,textarea{font:inherit}
+    .lock{min-height:100vh;display:grid;place-items:center;padding:24px;background:linear-gradient(135deg,rgba(37,87,167,.12),rgba(19,133,111,.1)),var(--paper)}
+    .card,.panel{background:var(--panel);border:1px solid var(--line);border-radius:8px;box-shadow:0 8px 28px rgba(25,35,49,.08);padding:20px}
+    .card{width:min(520px,100%)}
+    .pwrow{display:flex;gap:10px}
+    input,select,textarea{width:100%;border:1px solid var(--line);border-radius:6px;padding:10px;background:#fff;color:var(--ink)}
+    textarea{min-height:76px;resize:vertical}
+    .btn{border:0;background:var(--blue);color:#fff;border-radius:6px;padding:10px 14px;font-weight:700;cursor:pointer}
+    .btn.secondary{background:#eef2f7;color:var(--ink)}
+    main{max-width:1180px;margin:auto;padding:24px}
+    .top{display:flex;justify-content:space-between;align-items:center;gap:16px;margin-bottom:16px}
+    .muted{color:var(--muted);line-height:1.45}
+    .legend-grid,.grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}
+    .pill{border:1px solid var(--line);border-radius:6px;background:#f7f9fc;padding:10px}
+    .note{background:var(--amber-soft);color:#6f4300;border:1px solid #f4d49a;border-radius:7px;padding:12px;margin-top:12px;line-height:1.45}
+    .tabs{display:flex;gap:14px;margin:22px 0}
+    .tab{flex:1;border:2px solid transparent;border-radius:8px;min-height:78px;padding:20px;font-size:21px;font-weight:700;cursor:pointer;box-shadow:0 8px 24px rgba(25,35,49,.08)}
+    .tab.p{background:var(--green-soft);border-color:#a8ded0;color:#0d6656}
+    .tab.m{background:var(--red-soft);border-color:#ffbeb9;color:#8d1b12}
+    .tab.active{color:#fff}
+    .tab.p.active{background:var(--green);border-color:var(--green)}
+    .tab.m.active{background:var(--red);border-color:var(--red)}
+    .layout{display:grid;grid-template-columns:minmax(0,1.25fr) minmax(340px,.75fr);gap:18px;align-items:start}
+    .step{display:grid;grid-template-columns:190px minmax(0,1fr);gap:16px;width:100%;text-align:left;background:#fbfcfe;border:1px solid var(--line);border-radius:8px;padding:13px;margin:10px 0;cursor:pointer}
+    .step.active{border-color:var(--blue);box-shadow:0 10px 26px rgba(25,35,49,.12);background:#fff}
+    .time{display:block;width:100%;background:var(--blue-soft);color:#174ea6;border-radius:6px;padding:6px 8px;font-size:12px;font-weight:700;line-height:1.25}
+    .status{display:inline-block;margin-top:8px;border-radius:6px;background:#eef2f7;color:var(--muted);padding:4px 7px;font-size:12px;font-weight:700}
+    .status.done{background:var(--green-soft);color:var(--green)}
+    .status.work{background:var(--amber-soft);color:var(--amber)}
+    .detail{position:sticky;top:16px}
+    .tag{display:inline-block;background:var(--green-soft);color:var(--green);font-size:13px;font-weight:700;border-radius:6px;padding:7px 10px}
+    .section{border-top:1px solid var(--line);margin-top:16px;padding-top:16px}
+    .section h3{margin:0 0 8px;font-size:15px}
+    ul{margin:0;padding-left:20px;color:var(--muted);line-height:1.5}
+    .tracker-help{font-size:13px;color:var(--muted);line-height:1.45}
+    .tracker-row{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px;margin-bottom:10px}
+    label{display:block;font-size:12px;font-weight:700;color:var(--muted);margin-bottom:5px}
+    .matrix{display:none;margin-top:18px}
+    .matrix.show{display:block}
+    .matrix-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:12px}
+    .matrix-item{border:1px solid var(--line);border-radius:8px;background:#fbfcfe;padding:14px}
+    @media(max-width:900px){.layout,.legend-grid,.grid,.matrix-grid,.tracker-row{grid-template-columns:1fr}.detail{position:static}.tabs{flex-direction:column}.step{grid-template-columns:1fr}.pwrow{flex-direction:column}}
+  </style>
+</head>
+<body>
+  <section class="lock" id="lock">
+    <div class="card">
+      <h1>Wezmart Employment Action Workflow</h1>
+      <p class="muted">Enter the password to view the PIP, misconduct, removal and termination decision flow.</p>
+      <div class="pwrow">
+        <input id="pw" type="password" placeholder="Password">
+        <button class="btn" id="unlock" type="button">Unlock</button>
+      </div>
+      <p id="err" style="color:#b42318"></p>
+    </div>
+  </section>
+
+  <main id="app" style="display:none">
+    <div class="top">
+      <div>
+        <h1>Dismissal, PIP and Termination Workflow</h1>
+        <p class="muted">Interactive SOP guide focused on process, timeline, monitoring and approval authority.</p>
+      </div>
+      <button class="btn secondary" id="lockAgain" type="button">Lock</button>
+    </div>
+
+    <section class="panel">
+      <h2>Owner Legend</h2>
+      <p class="muted">Every process step needs a clear department or authority so no one person controls the whole outcome.</p>
+      <div class="legend-grid">
+        <div class="pill">HOD: work facts and target setting</div>
+        <div class="pill">HR: process and records</div>
+        <div class="pill">Works Committee: risk review</div>
+        <div class="pill">CEO / BOD: final serious action</div>
+      </div>
+      <div class="note">
+        <b>Works Committee</b><br>
+        A neutral review group, normally made up of senior representatives from HR, Legal and Risk or other independent senior officers. They review evidence, fairness, consistency and risk, and make recommendations before serious action goes to CEO/BOD.
+      </div>
+    </section>
+
+    <div class="tabs">
+      <button class="tab p active" type="button" data-flow="performance">Poor Performance / PIP</button>
+      <button class="tab m" type="button" data-flow="misconduct">Misconduct / Dismissal</button>
+    </div>
+
+    <section class="layout">
+      <div class="panel">
+        <h2 id="heading"></h2>
+        <p id="sub" class="muted"></p>
+        <div id="steps"></div>
+      </div>
+
+      <aside class="panel detail">
+        <span class="tag">Selected step</span>
+        <h2 id="title"></h2>
+        <p id="summary" class="muted"></p>
+
+        <div class="grid">
+          <p><b>Owner</b><br><span id="owner"></span></p>
+          <p><b>Timeline</b><br><span id="timeline"></span></p>
+        </div>
+
+        <div class="section">
+          <h3>Monitor This Step</h3>
+          <p class="tracker-help">Use this like a simple tracker: assign a PIC, set a target date, update status, then record the next action or completion note.</p>
+          <div class="tracker-row">
+            <div><label for="pic">Person in charge</label><input id="pic" placeholder="Name / department"></div>
+            <div><label for="target">Target date</label><input id="target" type="date"></div>
+          </div>
+          <div class="tracker-row">
+            <div>
+              <label for="status">Status</label>
+              <select id="status">
+                <option>Not set</option>
+                <option>Not started</option>
+                <option>In progress</option>
+                <option>Waiting for employee</option>
+                <option>Pending approval</option>
+                <option>Done</option>
+                <option>On hold</option>
+              </select>
+            </div>
+            <div><label for="done">Done date</label><input id="done" type="date"></div>
+          </div>
+          <div><label for="notes">Notes / next action</label><textarea id="notes" placeholder="Example: HR to issue show cause by Friday."></textarea></div>
+          <p><button class="btn" id="save" type="button">Save Step</button> <button class="btn secondary" id="clear" type="button">Clear</button></p>
+          <p id="saved" style="color:#13856f;font-weight:700"></p>
+        </div>
+
+        <div class="section"><h3>Examples</h3><ul id="examples"></ul></div>
+        <div class="section"><h3>What can be done better</h3><ul id="better"></ul></div>
+        <div class="section"><h3>Records to keep</h3><ul id="records"></ul></div>
+        <div class="note" id="legal"></div>
+      </aside>
+    </section>
+
+    <section class="panel matrix" id="matrix">
+      <h2>Misconduct Category Matrix</h2>
+      <p class="muted">Use this to classify the seriousness of the case before deciding whether warning, DI, removal, demotion or dismissal should be considered.</p>
+      <div class="matrix-grid">
+        <div class="matrix-item">
+          <h3>Minor Misconduct</h3>
+          <p class="muted">Behavioral deviations that disrupt administrative order but do not cause direct financial or legal harm.</p>
+          <ul>
+            <li>Habitual or excessive tardiness.</li>
+            <li>Violations of office dress code policies.</li>
+            <li>Failing to log out or punch timecards properly.</li>
+            <li>Minor discourtesy toward colleagues.</li>
+          </ul>
+        </div>
+        <div class="matrix-item">
+          <h3>Major Misconduct</h3>
+          <p class="muted">Actions that damage operational productivity, compromise security, or violate corporate governance.</p>
+          <ul>
+            <li>Disobeying clear, legitimate instructions from a superior.</li>
+            <li>Installing unapproved software or games on corporate computers.</li>
+            <li>Leaving work early or being absent without notice.</li>
+            <li>Sharing inaccurate information outside the organization.</li>
+          </ul>
+        </div>
+        <div class="matrix-item">
+          <h3>Gross Misconduct</h3>
+          <p class="muted">Critical breaches that fundamentally undermine the employment relationship and cause direct financial or reputational harm.</p>
+          <ul>
+            <li>Theft, fraud, or dishonesty involving corporate properties.</li>
+            <li>Asking for, offering, or accepting bribes or unauthorized financial favors.</li>
+            <li>Physical fights, threats, or harassment on office premises.</li>
+            <li>Being convicted of a criminal offense by a Court of Law.</li>
+            <li>Falsifying or tampering with attendance and business records.</li>
+          </ul>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <script>
+    const PASSWORD = "Victortai";
+
+    const flows = {
+      performance: {
+        heading: "Poor Performance / PIP",
+        sub: "Used when the issue is capability, output, quality, deadlines or work standard.",
+        note: "Poor performance should not be treated exactly like misconduct unless there is negligence, refusal, dishonesty or wilful failure.",
+        examples: [
+          "Consistently missing agreed deadlines despite reminders or coaching.",
+          "Work contains repeated accuracy or quality issues and needs frequent correction.",
+          "Unable to meet reasonable output or KPI expectations for the role.",
+          "Repeated failure to follow the correct work process because of skill, knowledge or capability gap.",
+          "Slow turnaround, poor prioritisation, or incomplete work without misconduct element."
+        ],
+        steps: [
+          ["Poor performance identified","HOD","Day 0","The HOD notices repeated work gaps such as missed deadlines, poor work quality, low output, repeated correction, or failure to meet role expectations."],
+          ["Initial review","HOD + HR","Within 3 working days","HR and the HOD check whether the concern is supported by evidence and whether coaching, clarification, or formal action is needed."],
+          ["Show cause / explanation","HR issues, HOD supports","Employee reply within 5 working days","The employee is asked to explain the performance gap before the Company decides whether formal warning or PIP is appropriate."],
+          ["Performance warning","HR + HOD","After explanation review","If the explanation is not satisfactory, HR may issue a written performance warning and prepare the employee for formal PIP."],
+          ["60-day PIP starts","HR + HOD","Minimum 60 days","A structured plan begins with clear targets, support, review dates, and expected outcomes."],
+          ["Weekly PIP reviews","HOD documents, HR monitors","Weekly during PIP","Progress is reviewed weekly so the employee knows whether they are improving and the Company has a fair record."],
+          ["Final PIP review","HR + HOD","End of 60 days","HR and the HOD decide whether the employee has improved enough, needs extension, should be reassigned, demoted, removed from role, or terminated."],
+          ["Works Committee review","Works Committee","Within 5 working days","For serious consequences such as demotion, removal from position or termination, the Works Committee checks fairness, evidence, proportionality and risk."],
+          ["CEO / BOD approval","CEO / BOD","Before final letter","Final approval is required for serious outcomes such as removal, demotion or termination."],
+          ["Decision and appeal","HR + Appeal Group","Appeal within 10 working days","HR issues the decision letter. The employee may use the internal appeal route. Internal final decision does not remove statutory rights."]
+        ]
+      },
+      misconduct: {
+        heading: "Misconduct / Dismissal",
+        sub: "Used when the issue is conduct, breach of rules, dishonesty, absence, refusal or serious workplace behaviour.",
+        note: "Dismissal for misconduct should normally follow due inquiry. Suspension pending inquiry should be controlled and documented.",
+        examples: [
+          "Theft, fraud, dishonesty, falsifying claims, attendance or company records.",
+          "Absent without approval, leaving work without notice, or repeated unauthorised lateness.",
+          "Refusal to follow a lawful and reasonable instruction from a superior.",
+          "Harassment, threats, fighting, bribery, conflict of interest or misuse of company property.",
+          "Data leak, breach of confidentiality, or serious breach of company policy."
+        ],
+        steps: [
+          ["Incident reported","HOD / Complainant","Day 0","A possible misconduct incident is reported, such as dishonesty, unauthorised absence, refusal to follow lawful instruction, harassment, or serious breach."],
+          ["Evidence gathering","HOD + HR","Within 3 working days where possible","HR and the HOD collect available evidence and witness information before formal action is taken."],
+          ["Prima facie assessment","HR + Works Committee","Within 5 working days","The Company checks whether there is enough initial evidence to require the employee to answer the allegation."],
+          ["Show cause letter","HR","Reply within 5 working days","The employee receives the allegation and has a chance to provide a written explanation."],
+          ["Response review","HR + HOD","Within 3 working days after reply","The employee's explanation is reviewed. Minor matters may be closed or handled by warning; serious unresolved matters may proceed to DI."],
+          ["Suspension pending DI","HR + Works Committee","Not exceeding 2 weeks","For serious matters, the employee may be suspended pending inquiry where necessary to protect evidence, workplace safety or investigation integrity."],
+          ["DI notice and charge sheet","HR","At least 7 working days before hearing","The employee receives formal charges and details of the domestic inquiry hearing."],
+          ["Domestic Inquiry hearing","Independent DI Panel","Hearing date","The panel hears evidence from both sides, allows witnesses and questions, and records the proceedings."],
+          ["Findings and recommendation","DI Panel + Works Committee","Within 5 working days after DI","The DI panel decides whether the charge is proven. The Works Committee recommends a proportionate penalty if proven."],
+          ["CEO / BOD final approval","CEO / BOD","Before dismissal or removal","Dismissal, removal from position or demotion should receive final approval before HR issues the decision."],
+          ["Decision and appeal","HR + Appeal Group","Appeal within 10 working days","HR issues the outcome letter. The employee can appeal internally, while statutory rights remain unaffected."]
+        ]
+      }
+    };
+
+    let currentFlow = "performance";
+    let selectedIndex = 0;
+    const storagePrefix = "wezmarthr-workflow-";
+    const $ = id => document.getElementById(id);
+
+    function renderList(items) {
+      return items.map(item => `<li>${item}</li>`).join("");
+    }
+
+    function trackerKey() {
+      return `${storagePrefix}${currentFlow}-${selectedIndex}`;
+    }
+
+    function readTrackerFor(flowKey, index) {
+      return JSON.parse(localStorage.getItem(`${storagePrefix}${flowKey}-${index}`) || "{}");
+    }
+
+    function loadTracker() {
+      const saved = JSON.parse(localStorage.getItem(trackerKey()) || "{}");
+      $("pic").value = saved.pic || "";
+      $("target").value = saved.target || "";
+      $("status").value = saved.status || "Not set";
+      $("done").value = saved.done || "";
+      $("notes").value = saved.notes || "";
+      $("saved").textContent = saved.updated ? `Saved: ${saved.updated}` : "";
+    }
+
+    function saveTracker() {
+      const data = {
+        pic: $("pic").value,
+        target: $("target").value,
+        status: $("status").value,
+        done: $("done").value,
+        notes: $("notes").value,
+        updated: new Date().toLocaleString()
+      };
+      localStorage.setItem(trackerKey(), JSON.stringify(data));
+      renderFlow(currentFlow, selectedIndex);
+    }
+
+    function clearTracker() {
+      localStorage.removeItem(trackerKey());
+      renderFlow(currentFlow, selectedIndex);
+    }
+
+    function renderDetail() {
+      const flow = flows[currentFlow];
+      const step = flow.steps[selectedIndex];
+
+      $("title").textContent = step[0];
+      $("owner").textContent = step[1];
+      $("timeline").textContent = step[2];
+      $("summary").textContent = step[3];
+      $("examples").innerHTML = renderList(flow.examples);
+      $("better").innerHTML = renderList([
+        "Keep facts specific and measurable.",
+        "Document reasons and decisions clearly.",
+        "Check consistency and proportionality before serious action."
+      ]);
+      $("records").innerHTML = renderList([
+        "Letters and acknowledgements.",
+        "Evidence, review notes and minutes.",
+        "Approval and appeal records."
+      ]);
+      $("legal").textContent = flow.note;
+      loadTracker();
+    }
+
+    function renderFlow(flowKey, index) {
+      currentFlow = flowKey;
+      selectedIndex = index;
+      const flow = flows[flowKey];
+
+      $("heading").textContent = flow.heading;
+      $("sub").textContent = flow.sub;
+      $("matrix").classList.toggle("show", flowKey === "misconduct");
+      $("steps").innerHTML = "";
+
+      flow.steps.forEach((step, stepIndex) => {
+        const saved = readTrackerFor(flowKey, stepIndex);
+        const status = saved.status || "Not set";
+        const statusClass = status === "Done" ? " done" : status !== "Not set" ? " work" : "";
+
+        const button = document.createElement("button");
+        button.type = "button";
+        button.className = "step" + (stepIndex === selectedIndex ? " active" : "");
+        button.innerHTML = `
+          <div class="time">${step[2]}</div>
+          <div>
+            <b>${step[0]}</b><br>
+            <span class="muted">Owner: ${step[1]}</span><br>
+            <span class="status${statusClass}">${status}</span>
+          </div>
+        `;
+        button.onclick = () => renderFlow(currentFlow, stepIndex);
+        $("steps").appendChild(button);
+      });
+
+      renderDetail();
+    }
+
+    $("unlock").onclick = () => {
+      if ($("pw").value === PASSWORD) {
+        $("lock").style.display = "none";
+        $("app").style.display = "block";
+        renderFlow(currentFlow, 0);
+      } else {
+        $("err").textContent = "Incorrect password.";
+      }
+    };
+
+    $("lockAgain").onclick = () => {
+      $("app").style.display = "none";
+      $("lock").style.display = "grid";
+      $("pw").value = "";
+      $("err").textContent = "";
+    };
+
+    $("save").onclick = saveTracker;
+    $("clear").onclick = clearTracker;
+
+    document.querySelectorAll(".tab").forEach(tab => {
+      tab.onclick = () => {
+        document.querySelectorAll(".tab").forEach(item => item.classList.remove("active"));
+        tab.classList.add("active");
+        renderFlow(tab.dataset.flow, 0);
+      };
+    });
+  </script>
+</body>
+</html>
